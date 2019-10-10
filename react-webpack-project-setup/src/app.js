@@ -19,29 +19,40 @@ class App extends React.Component {
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
   }
   componentDidMount() {
-    this.getData()
+    this.getData(this.state.selectedCountry, this.state.selectedCategory,)
   }
-  getData() {
-    axios.get(`https://newsapi.org/v2/top-headlines?country=${this.state.selectedCountry}&category=${this.state.selectedCategory}${this.state.token}`)
-      // .then(res => console.log(res.data))
-      .then(res => this.setState({ news: res.data }))
-      .catch(err => console.log(err.message))
-  }
+ 
 
   handleClick(e) {
     const selectedCategory = e.target.value.toLowerCase()
     this.setState({ selectedCategory })
-    console.log(this.state)
-    this.getData()
+    // console.log(this.state)
+    this.getData(this.state.selectedCountry, selectedCategory)
   }
 
   handleChange(e) {
     const selectedCountry = e.target.value
-    console.log('change')
     this.setState({ selectedCountry })
-    this.getData()
+    this.getData(selectedCountry, this.state.selectedCategory)
     
   }
+
+  changeValues() {
+    
+  }
+
+  getData( selectedCountry, selectedCategory ) {
+    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}${this.state.token}`)
+      // .then(res => console.log(res.data))
+      .then(res => {
+        console.log('got data')
+        this.setState({ news: res.data })
+      })
+      .catch(err => console.log(err.message))
+    console.log('loading', this.state.selectedCategory, this.state.selectedCountry)
+  }
+
+
 
   retrieveSources() {
     // this.state.news.articles.map(article => (
@@ -49,8 +60,9 @@ class App extends React.Component {
     // ))
   }
   render() {
-    console.log(this.countries.split(' '))
-    console.log('state is', this.state.news)
+
+    console.log('rendering', this.state.selectedCategory, this.state.selectedCountry)
+    console.log(this.state.news)
     return (
       <>
         <header className="navbar">
@@ -75,7 +87,7 @@ class App extends React.Component {
                 {this.state.error && <p>Oops, something went wrong</p>}
                 {this.state.news &&
                   this.state.news.articles.map(article => (
-                    <div className="card" key={article.index}>
+                    <div className="card" key={article.title}>
                       <div className="card-header">
                         <h1 className="card-header-title">{article.title}</h1>
                       </div>

@@ -11,17 +11,21 @@ class App extends React.Component {
       error: null,
       token: '&apiKey=cbe8a4a0457e4d83bd127fd1986747d2',
       selectedCategory: 'technology',
-      selectedCountry: 'gb'
+      selectedCountry: 'gb',
+      searchString: ''
     }
+
+    this.handleSearchSubmit = this.handleSearchSubmit.bind(this)
+    this.handleKeyUp = this.handleKeyUp.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.categories = ['All', 'Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology']
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
   }
   componentDidMount() {
-    this.getData(this.state.selectedCountry, this.state.selectedCategory,)
+    this.getData(this.state.selectedCountry, this.state.selectedCategory)
   }
- 
+
 
   handleClick(e) {
     const selectedCategory = e.target.value.toLowerCase()
@@ -34,22 +38,41 @@ class App extends React.Component {
     const selectedCountry = e.target.value
     this.setState({ selectedCountry })
     this.getData(selectedCountry, this.state.selectedCategory)
-    
+
   }
 
-  changeValues() {
-    
+  handleKeyUp(e) {
+    const searchString = e.target.value
+    this.setState({ searchString })
+    console.log(searchString)
+
   }
 
-  getData( selectedCountry, selectedCategory ) {
-    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}${this.state.token}`)
+  handleSearchSubmit(e) {
+    console.log('button', this.state.searchString)
+    this.performSearch()
+
+  }
+
+  performSearch() {
+    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}${this.state.token}`)
       // .then(res => console.log(res.data))
       .then(res => {
         console.log('got data')
         this.setState({ news: res.data })
       })
       .catch(err => console.log(err.message))
-    console.log('loading', this.state.selectedCategory, this.state.selectedCountry)
+  }
+
+  getData(selectedCountry, selectedCategory) {
+    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}${this.state.token}`)
+      // .then(res => console.log(res.data))
+      .then(res => {
+        // console.log('got data')
+        this.setState({ news: res.data })
+      })
+      .catch(err => console.log(err.message))
+    // console.log('loading', this.state.selectedCategory, this.state.selectedCountry)
   }
 
 
@@ -66,16 +89,27 @@ class App extends React.Component {
     return (
       <>
         <header className="navbar">
-          <select onChange={this.handleChange} >
-            {this.countries.split(' ').map(country => 
+          <select className="languageSelect" onChange={this.handleChange} >
+            {this.countries.split(' ').map(country =>
               <option key={country}>{country}</option>
             )}
           </select>
+          {/* Source filter dropdown to below to be fixed */}
+          {/* <select className="sourceSelect" >
+            {this.state.news.articles.filter(article =>
+              <option key={article.title}>{article.source.name}</option>
+            )}
+          </select> */}
+
           <div className="buttons">
             {this.categories.map(cat => (
               <button onClick={this.handleClick} key={cat.index} value={cat}>{cat}</button>
             ))}
           </div>
+          <label>
+            <input onKeyUp={this.handleKeyUp} name="searchInput" placeholder="Search..."></input>
+            <button className="searchSubmit" onClick={this.handleSearchSubmit}>Search</button>
+          </label>
 
         </header>
         <div className="section">

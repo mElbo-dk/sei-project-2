@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-import axios from 'axios'
 import 'bulma'
+import './style.scss'
+import axios from 'axios'
+
 
 class App extends React.Component {
   constructor() {
@@ -13,10 +14,10 @@ class App extends React.Component {
       selectedCategory: 'technology',
       selectedCountry: 'gb',
       searchString: '',
-      filteredSources: []
+      filteredSources: [],
+      selectedSource: 'All'
 
     }
-
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this)
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.handleClick = this.handleClick.bind(this)
@@ -79,12 +80,18 @@ class App extends React.Component {
 
   }
 
-  retrieveSources() {
-
+  retrieveSources(e) {
+    const selectedSource = e.target.value
     const sources = this.state.news.articles.map(article => article.source.name)
-    const filteredSources = sources.filter((source, index) => sources.indexOf(source) === index).sort()
-    this.setState({ filteredSources })
-    console.log('filter', filteredSources)
+    const filteredSources = sources.filter((source, index) => sources.indexOf(source) === index).sort() ||
+      this.selectedSource === 'All'
+
+    this.setState({ filteredSources, selectedSource })
+    console.log('filter', filteredSources, this.state.selectedSource)
+  }
+
+  filterArticles() {
+
   }
   render() {
 
@@ -93,51 +100,57 @@ class App extends React.Component {
     return (
       <>
         <header className="navbar">
-          <select className="languageSelect" onChange={this.handleChange} >
-            <option>{this.state.selectedCountry}</option>
-            {this.countries.split(' ').map(country =>
-              <option key={country}>{country}</option>
-            )}
-          </select>
-
-          <select className="sourceSelect" >
-            <option>All</option>
-            {this.state.filteredSources.map(source =>
-              <option key={source}>{source}</option>
-            )}
-          </select>
-
-          <div className="buttons">
-            {this.categories.map(cat => (
-              <button onClick={this.handleClick} key={cat} value={cat}>{cat}</button>
-            ))}
+          <div className="selectors">
+            {/* Source filter functionality needs to be finished and implemented, currently it's not displayed with SCSS */}
+            <select className="sourceSelect" onChange={this.retrieveSources}>
+              <option>All</option>
+              {this.state.filteredSources.map(source =>
+                <option key={source}>{source}</option>
+              )}
+            </select>
+            <div className="buttons">
+              {this.categories.map(cat => (
+                <button className="categoryButton" onClick={this.handleClick} key={cat} value={cat}>{cat}</button>
+              ))}
+            </div>
+            <p>Language:</p>
+            <select className="languageSelector" onChange={this.handleChange} >
+              <option>{this.state.selectedCountry}</option>
+              {this.countries.split(' ').map(country =>
+                <option key={country}>{country}</option>
+              )}
+            </select>
           </div>
-          <label>
+
+          <div className="searchBar">
             <input onKeyUp={this.handleKeyUp} name="searchInput" placeholder="Search..."></input>
             <button className="searchSubmit" onClick={this.handleSearchSubmit}>Search</button>
-          </label>
+          </div>
 
         </header>
         <div className="section">
 
           <div className="container">
-            <div className="columns is-mobile is-multiline">
+            <div className="columns">
               <div className="articles">
                 {!this.state.news && !this.state.error && <p>Loading......</p>}
                 {this.state.error && <p>Oops, something went wrong</p>}
                 {this.state.news &&
                   this.state.news.articles.map(article => (
                     <div className="card" key={article.title}>
-                      <div className="card-header">
-                        <h1 className="card-header-title">{article.title}</h1>
-                      </div>
-                      <div className="card-content">
-                        <h2 >{article.description}</h2>
-                      </div>
-                      <figure className="image">
-                        <img className="card-image" src={article.urlToImage} alt='article image' />
-                      </figure>
+                      <a href={article.url} target="_blank">
+                        <div className="card-header">
+                          <h1 className="card-header-title">{article.title}</h1>
+                        </div>
+                        <div className="card-content">
+                          <p >{article.content}</p>
+                        </div>
+                        <figure className="image">
+                          <img className="card-image" src={article.urlToImage} alt='article image' />
+                        </figure>
+                      </a>
                     </div>
+
                   ))}
               </div>
             </div>

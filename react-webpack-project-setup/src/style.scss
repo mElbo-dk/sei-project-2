@@ -1,1 +1,54 @@
+@import url('https://fonts.googleapis.com/css?family=Oswald&display=swap');
+$base-font:'Oswald', sans-serif;
+$base-button-height: 4vh;
+$base-white-color: rgb(245, 238, 238);
 
+body {
+  background-color: black;
+  font-family: $base-font;
+}
+.sourceSelect {
+  display: none;
+}
+.navbar {
+  display: flex;
+  flex-direction: column;
+  font-family: $base-font;
+  background-color: $base-white-color;
+
+}
+  .selectors {
+    display: flex;
+    justify-content: space-between;
+  } 
+div.buttons {
+  padding: 0;
+  margin: 0;
+}
+  button, select {
+    height: $base-button-height;
+    width: 10vw;
+  }
+  .searchBar {
+    display: flex;
+    margin-top: 2vh;
+    width: 100%;
+  }
+  input {
+    width: 90vw;
+    height: $base-button-height;
+  }
+  .container {
+    display: flex;
+    justify-content: center;
+  }
+  .articles{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .card {
+    max-width: 47%;;
+    margin: 2vh;
+    background-color: $base-white-color;
+  }

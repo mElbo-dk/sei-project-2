@@ -17,6 +17,14 @@ body {
   background-color: $base-white-color;
 
 }
+.pageTitle {
+  border-bottom: 2px solid grey;
+  margin-bottom: 1vh;
+}
+.pageTitle h1{
+  text-align: center;
+  font-size: 80px;
+}
   .selectors {
     display: flex;
     justify-content: space-between;
@@ -51,4 +59,7 @@ div.buttons {
     max-width: 47%;;
     margin: 2vh;
     background-color: $base-white-color;
+  }
+  .warning {
+    color: white;
   }

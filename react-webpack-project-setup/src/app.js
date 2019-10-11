@@ -22,7 +22,7 @@ class App extends React.Component {
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.handleChange = this.handleChange.bind(this)
-    this.categories = ['All', 'Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology']
+    this.categories = ['Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology']
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
     this.webApiAccessToken = process.env.WEBAPI_ACCESS_TOKEN
   }
@@ -65,6 +65,7 @@ class App extends React.Component {
         this.setState({ news: res.data })
       })
       .catch(err => console.log(err.message))
+
   }
 
   getData(selectedCountry, selectedCategory) {
@@ -99,7 +100,12 @@ class App extends React.Component {
 
     return (
       <>
+     
         <header className="navbar">
+          <div className="pageTitle">
+            <h1>Daily News</h1>
+            <p>powered by NewsApi</p>
+          </div>
           <div className="selectors">
             {/* Source filter functionality needs to be finished and implemented, currently it's not displayed with SCSS */}
             <select className="sourceSelect" onChange={this.retrieveSources}>
@@ -108,6 +114,7 @@ class App extends React.Component {
                 <option key={source}>{source}</option>
               )}
             </select>
+
             <div className="buttons">
               {this.categories.map(cat => (
                 <button className="categoryButton" onClick={this.handleClick} key={cat} value={cat}>{cat}</button>
@@ -133,9 +140,11 @@ class App extends React.Component {
           <div className="container">
             <div className="columns">
               <div className="articles">
-                {!this.state.news && !this.state.error && <p>Loading......</p>}
-                {this.state.error && <p>Oops, something went wrong</p>}
+                {!this.state.news && !this.state.error && <p className="warning">Loading......</p>}
+                {this.state.news === [] && <p className="warning">OOPs, 0 results</p>}
+                {this.state.error && <p className="warning">Oops, something went wrong</p>}
                 {this.state.news &&
+                
                   this.state.news.articles.map(article => (
                     <div className="card" key={article.title}>
                       <a href={article.url} target="_blank">
@@ -152,10 +161,12 @@ class App extends React.Component {
                     </div>
 
                   ))}
+
               </div>
             </div>
           </div>
         </div >
+
       </>
     )
   }

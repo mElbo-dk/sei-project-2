@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import axios from 'axios'
 import 'bulma'
 
@@ -9,10 +10,11 @@ class App extends React.Component {
     this.state = {
       news: null,
       error: null,
-      token: '&apiKey=cbe8a4a0457e4d83bd127fd1986747d2',
       selectedCategory: 'technology',
       selectedCountry: 'gb',
-      searchString: ''
+      searchString: '',
+      filteredSources: []
+
     }
 
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this)
@@ -21,16 +23,16 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.categories = ['All', 'Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology']
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
+    this.webApiAccessToken = process.env.WEBAPI_ACCESS_TOKEN
   }
   componentDidMount() {
     this.getData(this.state.selectedCountry, this.state.selectedCategory)
-  }
 
+  }
 
   handleClick(e) {
     const selectedCategory = e.target.value.toLowerCase()
     this.setState({ selectedCategory })
-    // console.log(this.state)
     this.getData(this.state.selectedCountry, selectedCategory)
   }
 
@@ -49,13 +51,13 @@ class App extends React.Component {
   }
 
   handleSearchSubmit(e) {
-    console.log('button', this.state.searchString)
+    // console.log('button', this.state.searchString)
     this.performSearch()
 
   }
 
   performSearch() {
-    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}${this.state.token}`)
+    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}&apikey=${this.webApiAccessToken}`)
       // .then(res => console.log(res.data))
       .then(res => {
         console.log('got data')
@@ -65,45 +67,49 @@ class App extends React.Component {
   }
 
   getData(selectedCountry, selectedCategory) {
-    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}${this.state.token}`)
+    console.log('filter state', this.state.filteredSources)
+    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}&apikey=${this.webApiAccessToken}`)
       // .then(res => console.log(res.data))
       .then(res => {
-        // console.log('got data')
         this.setState({ news: res.data })
+        this.retrieveSources()
       })
       .catch(err => console.log(err.message))
     // console.log('loading', this.state.selectedCategory, this.state.selectedCountry)
+
   }
 
-
-
   retrieveSources() {
-    // this.state.news.articles.map(article => (
 
-    // ))
+    const sources = this.state.news.articles.map(article => article.source.name)
+    const filteredSources = sources.filter((source, index) => sources.indexOf(source) === index).sort()
+    this.setState({ filteredSources })
+    console.log('filter', filteredSources)
   }
   render() {
 
-    console.log('rendering', this.state.selectedCategory, this.state.selectedCountry)
-    console.log(this.state.news)
+    console.log('rendering', this.state.filteredSources)
+
     return (
       <>
         <header className="navbar">
           <select className="languageSelect" onChange={this.handleChange} >
+            <option>{this.state.selectedCountry}</option>
             {this.countries.split(' ').map(country =>
               <option key={country}>{country}</option>
             )}
           </select>
-          {/* Source filter dropdown to below to be fixed */}
-          {/* <select className="sourceSelect" >
-            {this.state.news.articles.filter(article =>
-              <option key={article.title}>{article.source.name}</option>
+
+          <select className="sourceSelect" >
+            <option>All</option>
+            {this.state.filteredSources.map(source =>
+              <option key={source}>{source}</option>
             )}
-          </select> */}
+          </select>
 
           <div className="buttons">
             {this.categories.map(cat => (
-              <button onClick={this.handleClick} key={cat.index} value={cat}>{cat}</button>
+              <button onClick={this.handleClick} key={cat} value={cat}>{cat}</button>
             ))}
           </div>
           <label>

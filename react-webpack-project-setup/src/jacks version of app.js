@@ -9,9 +9,9 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      news: null,
+      news: { articles: [] },
       error: null,
-      selectedCategory: 'general',
+      selectedCategory: 'technology',
       selectedCountry: 'gb',
       searchString: '',
       filteredSources: [],
@@ -22,6 +22,7 @@ class App extends React.Component {
     this.handleKeyUp = this.handleKeyUp.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.handleSourceChange = this.handleSourceChange.bind(this)
     this.categories = ['Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology']
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
     this.webApiAccessToken = process.env.WEBAPI_ACCESS_TOKEN
@@ -41,15 +42,12 @@ class App extends React.Component {
     const selectedCountry = e.target.value
     this.setState({ selectedCountry })
     this.getData(selectedCountry, this.state.selectedCategory)
-
   }
+
   handleSourceChange(e) {
-    // console.log(this.state.news.articles)
     const selectedSource = e.target.value
-    // const filteredArticles = this.state.news.articles.filter(article => (
-    //   article.source.name === selectedSource
-    // ))
-    console.log(selectedSource)
+    this.setState({ selectedSource })
+
   }
 
   handleKeyUp(e) {
@@ -66,13 +64,14 @@ class App extends React.Component {
   }
 
   performSearch() {
-    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}&results=100&apikey=${this.webApiAccessToken}`)
+    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}&apikey=${this.webApiAccessToken}`)
       // .then(res => console.log(res.data))
       .then(res => {
         console.log('got data')
         this.setState({ news: res.data })
       })
       .catch(err => console.log(err.message))
+
   }
 
   getData(selectedCountry, selectedCategory) {
@@ -80,37 +79,41 @@ class App extends React.Component {
     axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}&apikey=${this.webApiAccessToken}`)
       // .then(res => console.log(res.data))
       .then(res => {
-        this.setState({ news: res.data })
-        this.retrieveSources()
+        this.setState({ news: res.data }, this.retrieveSources)
+        // this.retrieveSources()
       })
       .catch(err => console.log(err.message))
+    // console.log('loading', this.state.selectedCategory, this.state.selectedCountry)
 
   }
 
   retrieveSources() {
-    const sources = this.state.news.articles.map(article => article.source.name)
-    const filteredSources = sources.filter((source, index) => sources.indexOf(source) === index).sort() || this.selectedSource === 'All'
-    this.setState({ filteredSources })
+    return this.state.news.articles.filter(article => {
+      return article.source.name === this.state.this.state.selectedSource === 'AselectedSource || ll' 
+    })
   }
 
-  filterArticles() {
-
-  }
+  
   render() {
-    console.log('rendering')
+    
+    console.log('rendering', this.state.filteredSources)
+    if (!this.state.news) return null
+    this.retrieveSources()
+    const sources = [...new Set(this.state.news.articles.map(article => article.source.name))]
     return (
       <>
+     
         <header className="navbar">
           <div className="pageTitle">
             <h1>Daily News</h1>
-            <p>powered by NewsApi.org</p>
+            <p>powered by NewsApi</p>
           </div>
           <div className="selectors">
-           
+            {/* Source filter functionality needs to be finished and implemented, currently it's not displayed with SCSS */}
             <select className="sourceSelect" onChange={this.handleSourceChange}>
-              <option>All</option>
-              {this.state.filteredSources.map(source =>
-                <option key={source}>{source}</option>
+              <option value="All">All</option>
+              {sources.map(source =>
+                <option key={source} value={source}>{source}</option>
               )}
             </select>
 
@@ -135,21 +138,23 @@ class App extends React.Component {
 
         </header>
         <div className="section">
+
           <div className="container">
             <div className="columns">
               <div className="articles">
-                {!this.state.news && !this.state.error && <p className="message" className="warning">Loading......</p>}
-                {this.state.news === [] && <p className="warning">Oops, check your search criteria and try again </p>}
+                {!this.state.news && !this.state.error && <p className="warning">Loading......</p>}
+                {this.state.news === [] && <p className="warning">OOPs, 0 results</p>}
                 {this.state.error && <p className="warning">Oops, something went wrong</p>}
                 {this.state.news &&
-                  this.state.news.articles.map(article => (
+                
+                  this.retrieveSources().map(article => (
                     <div className="card" key={article.title}>
                       <a href={article.url} target="_blank">
                         <div className="card-header">
-                          <h2 className="card-header-title">{article.title}</h2>
+                          <h1 className="card-header-title">{article.title}</h1>
                         </div>
                         <div className="card-content">
-                          <p >{article.description}</p>
+                          <p >{article.content}</p>
                         </div>
                         <figure className="image">
                           <img className="card-image" src={article.urlToImage} alt='article image' />

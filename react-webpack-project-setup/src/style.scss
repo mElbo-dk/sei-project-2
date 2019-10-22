@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Oswald&display=swap');
 $base-font:'Oswald', sans-serif;
 $base-button-height: 4vh;
-$base-white-color: rgb(245, 238, 238);
+$base-white-color: rgb(240, 239, 239);
+
 
 body {
   background-color: black;
   font-family: $base-font;
 }
 .sourceSelect {
-  display: none;
+  // display: none;
 }
 .navbar {
   display: flex;

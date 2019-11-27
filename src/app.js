@@ -24,7 +24,7 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.categories = ['Business', 'Entertainment', 'General', 'Health', 'Science', 'Sports', 'Technology']
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
-    this.webApiAccessToken = process.env.WEBAPI_ACCESS_TOKEN
+    // this.webApiAccessToken = process.env.WEBAPI_ACCESS_TOKEN
   }
   componentDidMount() {
     this.getData(this.state.selectedCountry, this.state.selectedCategory)
@@ -66,7 +66,7 @@ class App extends React.Component {
   }
 
   performSearch() {
-    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}&results=100&apikey=${this.webApiAccessToken}`)
+    axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}&results=100&apikey=${process.env.WEBAPI_ACCESS_TOKEN}`)
       // .then(res => console.log(res.data))
       .then(res => {
         console.log('got data')
@@ -77,7 +77,7 @@ class App extends React.Component {
 
   getData(selectedCountry, selectedCategory) {
     console.log('filter state', this.state.filteredSources)
-    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}&apikey=${this.webApiAccessToken}`)
+    axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}&apikey=${process.env.WEBAPI_ACCESS_TOKEN}`)
       // .then(res => console.log(res.data))
       .then(res => {
         this.setState({ news: res.data })

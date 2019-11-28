@@ -4,7 +4,7 @@ import 'bulma'
 import './style.scss'
 import axios from 'axios'
 
-
+// creating data enviorment
 class App extends React.Component {
   constructor() {
     super()
@@ -26,23 +26,28 @@ class App extends React.Component {
     this.countries = 'ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za'
     // this.webApiAccessToken = process.env.WEBAPI_ACCESS_TOKEN
   }
+
+  // calling the API on loading the page
   componentDidMount() {
     this.getData(this.state.selectedCountry, this.state.selectedCategory)
 
   }
-
+  //handle the change of category 
   handleClick(e) {
     const selectedCategory = e.target.value.toLowerCase()
     this.setState({ selectedCategory })
     this.getData(this.state.selectedCountry, selectedCategory)
   }
 
+  //moving the language value 
   handleChange(e) {
     const selectedCountry = e.target.value
     this.setState({ selectedCountry })
     this.getData(selectedCountry, this.state.selectedCategory)
 
   }
+
+  // TODO : the name of the source of the news .. still not build
   handleSourceChange(e) {
     // console.log(this.state.news.articles)
     const selectedSource = e.target.value
@@ -52,6 +57,7 @@ class App extends React.Component {
     console.log(selectedSource)
   }
 
+  // handle the input for the search 
   handleKeyUp(e) {
     const searchString = e.target.value
     this.setState({ searchString })
@@ -59,12 +65,13 @@ class App extends React.Component {
 
   }
 
-  handleSearchSubmit(e) {
+  // starting the search by calling the API
+  handleSearchSubmit() {
     // console.log('button', this.state.searchString)
     this.performSearch()
 
   }
-
+  // search call to the API
   performSearch() {
     axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchString}&results=100&apikey=${process.env.WEBAPI_ACCESS_TOKEN}`)
       // .then(res => console.log(res.data))
@@ -75,6 +82,7 @@ class App extends React.Component {
       .catch(err => console.log(err.message))
   }
 
+  // get data from API with seleced language and category
   getData(selectedCountry, selectedCategory) {
     console.log('filter state', this.state.filteredSources)
     axios.get(`https://newsapi.org/v2/top-headlines?country=${selectedCountry}&category=${selectedCategory}&apikey=${process.env.WEBAPI_ACCESS_TOKEN}`)
@@ -86,7 +94,8 @@ class App extends React.Component {
       .catch(err => console.log(err.message))
 
   }
-
+ 
+  // finding the news suppliers name 
   retrieveSources() {
     const sources = this.state.news.articles.map(article => article.source.name)
     const filteredSources = sources.filter((source, index) => sources.indexOf(source) === index).sort() || this.selectedSource === 'All'
@@ -94,8 +103,11 @@ class App extends React.Component {
   }
 
   filterArticles() {
-
+    // still stuff to be done here
   }
+
+
+  // render the page and listen for input 
   render() {
     console.log('rendering')
     return (
@@ -144,7 +156,7 @@ class App extends React.Component {
                 {this.state.news &&
                   this.state.news.articles.map(article => (
                     <div className="card" key={article.title}>
-                      <a href={article.url} target="_blank">
+                      <a href={article.url} target="_blank" rel="noopener noreferrer">
                         <div className="card-header">
                           <h2 className="card-header-title">{article.title}</h2>
                         </div>

@@ -31,3 +31,10 @@ Here is the axios call for the seach function and the news articles. As explaine
 ## Deployment
 For deployment with webpack and React Heroku is a good hosting site. Heroku support Node.js and express with a secure way of keeping the tokens. Setting up the server is made by configuration in the webpack config file and Node.js will run Express.
 React need the running enviorment that is installed via the tool yarn build. When the files have been build on the local computer we can just "git push" to Heroku and it start to run. The Heroku server is less forgiven when it comes to running the JavaScript code, one example could be not spelling the port adress with capital letters.   
+
+## The Challanges
+This project did give a lot of new challanges in the way of finding a way to overcome the asynchronous dataflow in React. To be able to get the data and wait for it to be loaded into places where its accessible was something we did struggle with. To overcome it we had to make global variables instead of using state. 
+An diuffent challenge was the deployment, it was surpricing how code running on the local computer and working just fine was such a challange to get to run in a different enviorment. 
+
+## My takeaway 
+I leaned a lot in this project and really enjoyed the pair programming. We did have some discussion about how to do things but nothing really bad. The use of API's was a real eyeopener for me, the amount of API's avaliable and the flexibilty of the standard in the RESTFull API.
